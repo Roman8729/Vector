@@ -1,0 +1,91 @@
+#include <iostream> // Подключение библиотеки для ввода/вывода данных
+#include <stdexcept> // Подключение библиотеки для обработки исключений
+
+class Vector { // Объявление класса Vector
+private: // Секция приватных членов класса
+    static int count; // Статическая переменная для подсчета количества объектов класса
+    int* data; // Указатель на массив данных
+    int size; // Размер массива
+    int state; // Переменная состояния для обработки ошибок
+
+public: // Секция публичных членов класса
+    Vector() : size(1), state(0) { // Конструктор без параметров
+        data = new int[size]; // Выделение памяти под один элемент
+        data[0] = 0; // Инициализация элемента нулем
+        count++; // Увеличение счетчика объектов
+    }
+
+    Vector(int size) : size(size), state(0) { // Конструктор с одним параметром
+        data = new int[size]; // Выделение памяти под массив заданного размера
+        for (int i = 0; i < size; i++) { // Цикл по элементам массива
+            data[i] = i; // Инициализация элементов номерами в массиве
+        }
+        count++; // Увеличение счетчика объектов
+    }
+
+    Vector(int size, int initValue) : size(size), state(0) { // Конструктор с двумя параметрами
+        data = new int[size]; // Выделение памяти под массив заданного размера
+        for (int i = 0; i < size; i++) { // Цикл по элементам массива
+            data[i] = initValue; // Инициализация элементов заданным значением
+        }
+        count++; // Увеличение счетчика объектов
+    }
+
+    ~Vector() { // Деструктор
+        delete[] data; // Освобождение памяти
+        count--; // Уменьшение счетчика объектов
+    }
+
+    void set(int index, int value = 0) { // Метод для установки значения элемента
+        if (index < 0 || index >= size) { // Проверка на выход за границы массива
+            state = -1; // Установка кода ошибки
+            throw std::out_of_range("Index out of range"); // Генерация исключения
+        }
+        data[index] = value; // Установка значения элемента
+    }
+
+    int get(int index) { // Метод для получения значения элемента
+        if (index < 0 || index >= size) { // Проверка на выход за границы массива
+            state = -1; // Установка кода ошибки
+            throw std::out_of_range("Index out of range"); // Генерация исключения
+        }
+        return data[index]; // Возврат значения элемента
+    }
+
+    void print() { // Метод для печати вектора
+        for (int i = 0; i < size; i++) { // Цикл по элементам массива
+            std::cout << data[i] << " "; // Вывод значения элемента
+        }
+        std::cout << std::endl; // Переход на новую строку
+    }
+
+    Vector operator+(const Vector& other) { // Оператор сложения
+        if (size != other.size) { // Проверка на равенство размеров векторов
+            state = -1; // Установка кода ошибки
+            throw std::invalid_argument("Vectors must be the same size"); // Генерация исключения
+        }
+        Vector result(size); // Создание результата
+        for (int i = 0; i < size; i++) { // Цикл по элементам массива
+            result.data[i] = data[i] + other.data[i]; // Сложение элементов
+        }
+        return result; // Возврат результата
+    }
+
+    Vector operator-(const Vector& other) { // Оператор вычитания
+        if (size != other.size) { // Проверка на равенство размеров векторов
+            state = -1; // Установка кода ошибки
+            throw std::invalid_argument("Vectors must be the same size"); // Генерация исключения
+        }
+        Vector result(size); // Создание результата
+        for (int i = 0; i < size; i++) { // Цикл по элементам массива
+            result.data[i] = data[i] - other.data[i]; // Вычитание элементов
+        }
+        return result; // Возврат результата
+    }
+
+    Vector operator*(int scalar) { // Оператор умножения на скаляр
+        Vector result(size); // Создание результата
+        for (int i = 0; i < size; i++) { // Цикл по элементам массива
+            result.data[i] = data[i] * scalar; // Умножение элемента на скаляр
+        }
+        return result; //
